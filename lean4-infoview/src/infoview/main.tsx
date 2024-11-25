@@ -170,7 +170,7 @@ export function renderInfoview(editorApi: EditorApi, uiElement: HTMLElement): In
     return infoviewApi
 }
 
-export function renderInfoviewWith(editorApi: EditorApi, uiElement: HTMLElement): InfoviewApi {
+export function renderInfoviewWith(mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi, uiElement: HTMLElement): InfoviewApi {
     const editorEvents: EditorEvents = {
         initialize: new EventEmitter(),
         gotServerNotification: new EventEmitter(),
@@ -207,6 +207,7 @@ export function renderInfoviewWith(editorApi: EditorApi, uiElement: HTMLElement)
         getInfoviewHtml: async () => document.body.innerHTML,
     }
 
+    const editorApi = mkEditorApi(infoviewApi)
     const ec = new EditorConnection(editorApi, editorEvents)
 
     editorEvents.initialize.on((loc: Location) => ec.events.changedCursorLocation.fire(loc))
