@@ -170,109 +170,69 @@ export function renderInfoview(editorApi: EditorApi, uiElement: HTMLElement): In
     return infoviewApi
 }
 
-export function renderInfoviewWith(mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi, uiElement: HTMLElement): InfoviewApi {
-    const editorEvents: EditorEvents = {
-        initialize: new EventEmitter(),
-        gotServerNotification: new EventEmitter(),
-        sentClientNotification: new EventEmitter(),
-        serverRestarted: new EventEmitter(),
-        serverStopped: new EventEmitter(),
-        changedCursorLocation: new EventEmitter(),
-        changedInfoviewConfig: new EventEmitter(),
-        runTestScript: new EventEmitter(),
-        requestedAction: new EventEmitter(),
-        goToDefinition: new EventEmitter(),
-    }
+export const InfoviewFc: React.FC<
+    {
+        mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi;
+        setInfoviewApi: (infoviewApi: InfoviewApi) => void;
+    }> =
+    ({
+        mkEditorApi,
+        setInfoviewApi
+    }) => {
+        const [ec, setEc] = React.useState<EditorConnection>()
 
-    // Challenge: write a type-correct fn from `Eventify<T>` to `T` without using `any`
-    const infoviewApi: InfoviewApi = {
-        initialize: async l => editorEvents.initialize.fire(l),
-        gotServerNotification: async (method, params) => {
-            editorEvents.gotServerNotification.fire([method, params])
-        },
-        sentClientNotification: async (method, params) => {
-            editorEvents.sentClientNotification.fire([method, params])
-        },
-        serverRestarted: async r => editorEvents.serverRestarted.fire(r),
-        serverStopped: async serverStoppedReason => {
-            editorEvents.serverStopped.fire(serverStoppedReason)
-        },
-        changedCursorLocation: async loc => editorEvents.changedCursorLocation.fire(loc),
-        changedInfoviewConfig: async conf => editorEvents.changedInfoviewConfig.fire(conf),
-        requestedAction: async action => editorEvents.requestedAction.fire(action, action.kind),
-        goToDefinition: async id => editorEvents.goToDefinition.fire(id, id),
-        // See https://rollupjs.org/guide/en/#avoiding-eval
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        runTestScript: async script => new Function(script)(),
-        getInfoviewHtml: async () => document.body.innerHTML,
-    }
+        React.useEffect(
+            () => {
+                const editorEvents: EditorEvents = {
+                    initialize: new EventEmitter(),
+                    gotServerNotification: new EventEmitter(),
+                    sentClientNotification: new EventEmitter(),
+                    serverRestarted: new EventEmitter(),
+                    serverStopped: new EventEmitter(),
+                    changedCursorLocation: new EventEmitter(),
+                    changedInfoviewConfig: new EventEmitter(),
+                    runTestScript: new EventEmitter(),
+                    requestedAction: new EventEmitter(),
+                    goToDefinition: new EventEmitter(),
+                }
 
-    const editorApi = mkEditorApi(infoviewApi)
-    const ec = new EditorConnection(editorApi, editorEvents)
+                // Challenge: write a type-correct fn from `Eventify<T>` to `T` without using `any`
+                const infoviewApi: InfoviewApi = {
+                    initialize: async l => editorEvents.initialize.fire(l),
+                    gotServerNotification: async (method, params) => {
+                        editorEvents.gotServerNotification.fire([method, params])
+                    },
+                    sentClientNotification: async (method, params) => {
+                        editorEvents.sentClientNotification.fire([method, params])
+                    },
+                    serverRestarted: async r => editorEvents.serverRestarted.fire(r),
+                    serverStopped: async serverStoppedReason => {
+                        editorEvents.serverStopped.fire(serverStoppedReason)
+                    },
+                    changedCursorLocation: async loc => editorEvents.changedCursorLocation.fire(loc),
+                    changedInfoviewConfig: async conf => editorEvents.changedInfoviewConfig.fire(conf),
+                    requestedAction: async action => editorEvents.requestedAction.fire(action, action.kind),
+                    goToDefinition: async id => editorEvents.goToDefinition.fire(id, id),
+                    // See https://rollupjs.org/guide/en/#avoiding-eval
+                    // eslint-disable-next-line @typescript-eslint/no-implied-eval
+                    runTestScript: async script => new Function(script)(),
+                    getInfoviewHtml: async () => document.body.innerHTML,
+                }
 
-    editorEvents.initialize.on((loc: Location) => ec.events.changedCursorLocation.fire(loc))
+                const editorApi = mkEditorApi(infoviewApi)
+                const ec = new EditorConnection(editorApi, editorEvents)
 
-    const root = ReactDOM.createRoot(uiElement)
-    root.render(
-        <React.StrictMode>
-            <EditorContext.Provider value={ec}>
-                <Main />
-            </EditorContext.Provider>
-        </React.StrictMode>,
-    )
+                editorEvents.initialize.on((loc: Location) => ec.events.changedCursorLocation.fire(loc))
 
-    return infoviewApi
-}
+                setEc(ec)
+                setInfoviewApi(infoviewApi)
+            },
+            [setInfoviewApi, setEc, mkEditorApi],
+        )
 
-export const InfoviewFc: React.FC<{ mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi; setInfoviewApi: (infoviewApi: InfoviewApi) => void }> = ({ mkEditorApi, setInfoviewApi }) => {
-    const editorEvents: EditorEvents = {
-        initialize: new EventEmitter(),
-        gotServerNotification: new EventEmitter(),
-        sentClientNotification: new EventEmitter(),
-        serverRestarted: new EventEmitter(),
-        serverStopped: new EventEmitter(),
-        changedCursorLocation: new EventEmitter(),
-        changedInfoviewConfig: new EventEmitter(),
-        runTestScript: new EventEmitter(),
-        requestedAction: new EventEmitter(),
-        goToDefinition: new EventEmitter(),
-    }
-
-    // Challenge: write a type-correct fn from `Eventify<T>` to `T` without using `any`
-    const infoviewApi: InfoviewApi = {
-        initialize: async l => editorEvents.initialize.fire(l),
-        gotServerNotification: async (method, params) => {
-            editorEvents.gotServerNotification.fire([method, params])
-        },
-        sentClientNotification: async (method, params) => {
-            editorEvents.sentClientNotification.fire([method, params])
-        },
-        serverRestarted: async r => editorEvents.serverRestarted.fire(r),
-        serverStopped: async serverStoppedReason => {
-            editorEvents.serverStopped.fire(serverStoppedReason)
-        },
-        changedCursorLocation: async loc => editorEvents.changedCursorLocation.fire(loc),
-        changedInfoviewConfig: async conf => editorEvents.changedInfoviewConfig.fire(conf),
-        requestedAction: async action => editorEvents.requestedAction.fire(action, action.kind),
-        goToDefinition: async id => editorEvents.goToDefinition.fire(id, id),
-        // See https://rollupjs.org/guide/en/#avoiding-eval
-        // eslint-disable-next-line @typescript-eslint/no-implied-eval
-        runTestScript: async script => new Function(script)(),
-        getInfoviewHtml: async () => document.body.innerHTML,
-    }
-
-    const editorApi = mkEditorApi(infoviewApi)
-    const ec = new EditorConnection(editorApi, editorEvents)
-
-    editorEvents.initialize.on((loc: Location) => ec.events.changedCursorLocation.fire(loc))
-
-    React.useEffect(
-        () => {
-            console.log("[DEBUG]: setInfoviewApi")
-            setInfoviewApi(infoviewApi)
-        },
-        [setInfoviewApi],
-    )
+        if (!ec) {
+            return <></>
+        }
 
     return (
             <EditorContext.Provider value={ec}>
