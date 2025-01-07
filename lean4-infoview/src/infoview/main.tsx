@@ -266,7 +266,13 @@ export const InfoviewFc: React.FC<{ mkEditorApi: (infoviewApi: InfoviewApi) => E
 
     editorEvents.initialize.on((loc: Location) => ec.events.changedCursorLocation.fire(loc))
 
-    setInfoviewApi(infoviewApi)
+    React.useEffect(
+        () => {
+            console.log("[DEBUG]: setInfoviewApi")
+            setInfoviewApi(infoviewApi)
+        },
+        [setInfoviewApi],
+    )
 
     return (
             <EditorContext.Provider value={ec}>
