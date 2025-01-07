@@ -174,10 +174,12 @@ export const InfoviewFc: React.FC<
     {
         mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi;
         setInfoviewApi: (infoviewApi: InfoviewApi) => void;
+        setEditorConnection: (editorConnection: EditorConnection) => void;
     }> =
     ({
         mkEditorApi,
-        setInfoviewApi
+        setInfoviewApi,
+        setEditorConnection,
     }) => {
         const [ec, setEc] = React.useState<EditorConnection>()
 
@@ -226,8 +228,9 @@ export const InfoviewFc: React.FC<
 
                 setEc(ec)
                 setInfoviewApi(infoviewApi)
+                setEditorConnection(ec)
             },
-            [setInfoviewApi, setEc, mkEditorApi],
+            [setInfoviewApi, setEditorConnection, setEc, mkEditorApi],
         )
 
         if (!ec) {
