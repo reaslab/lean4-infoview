@@ -224,7 +224,7 @@ export function renderInfoviewWith(mkEditorApi: (infoviewApi: InfoviewApi) => Ed
     return infoviewApi
 }
 
-export const InfoviewFc : React.FC<{mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi}> = ({mkEditorApi}) => {
+export const InfoviewFc: React.FC<{ mkEditorApi: (infoviewApi: InfoviewApi) => EditorApi; setInfoviewApi: (infoviewApi: InfoviewApi) => void }> = ({ mkEditorApi, setInfoviewApi }) => {
     const editorEvents: EditorEvents = {
         initialize: new EventEmitter(),
         gotServerNotification: new EventEmitter(),
@@ -265,6 +265,8 @@ export const InfoviewFc : React.FC<{mkEditorApi: (infoviewApi: InfoviewApi) => E
     const ec = new EditorConnection(editorApi, editorEvents)
 
     editorEvents.initialize.on((loc: Location) => ec.events.changedCursorLocation.fire(loc))
+
+    setInfoviewApi(infoviewApi)
 
     return (
             <EditorContext.Provider value={ec}>
