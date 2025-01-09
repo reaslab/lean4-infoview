@@ -12,11 +12,13 @@ import { ErrorBoundary } from './errors'
 import { GoalsLocation } from './goalLocation'
 import { useRpcSession } from './rpcSessions'
 import { DocumentPosition, mapRpcError, useAsyncPersistent } from './util'
+import { rewriteModule } from './rewriteModule'
 
 async function dynamicallyLoadModule(hash: string, code: string): Promise<any> {
-    const file = new File([code], `widget_${hash}.js`, { type: 'text/javascript' })
+    const newCode = await rewriteModule(code)
+    const file = new File([newCode], `widget_${hash}.js`, { type: 'text/javascript' })
     const url = URL.createObjectURL(file)
-    return await import(url)
+    return await import(/* webpackIgnore: true */ url)
 }
 
 const moduleCache = new Map<string, any>()
