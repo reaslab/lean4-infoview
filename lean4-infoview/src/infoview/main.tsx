@@ -1,4 +1,4 @@
-import { VscodeButton } from '@vscode-elements/react-elements'
+// import { VscodeButton } from '@vscode-elements/react-elements'
 import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import type { DidCloseTextDocumentParams, DocumentUri, Location } from 'vscode-languageserver-protocol'
@@ -85,16 +85,17 @@ function Main() {
                     </div>
                 )}
                 {curUri && (
-                    <VscodeButton
-                        className="restart-file-button"
-                        style={{
-                            display: "none"
-                        }}
-                        onClick={_ => ec.api.restartFile(curUri)}
-                        title="Restarts this file, rebuilding all of its outdated dependencies."
-                    >
-                        Restart File
-                    </VscodeButton>
+                    // <VscodeButton
+                    //     className="restart-file-button"
+                    //     style={{
+                    //         display: "none"
+                    //     }}
+                    //     onClick={_ => ec.api.restartFile(curUri)}
+                    //     title="Restarts this file, rebuilding all of its outdated dependencies."
+                    // >
+                    //     Restart File
+                    // </VscodeButton>
+                    <></>
                 )}
             </div>
         )
