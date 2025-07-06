@@ -1,3 +1,5 @@
+.rl-infoview-hack {
+
 /*
 This file contains syntax highlighting themes for highlight.js,
 taken from https://unpkg.com/browse/@highlightjs/cdn-assets@11.10.0/styles/github.css (light)
@@ -207,4 +209,6 @@ pre code.hljs {
     /* prettylights-syntax-markup-deleted */
     color: #ffdcd7;
     background-color: #67060c;
+}
+
 }

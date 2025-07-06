@@ -243,8 +243,10 @@ export const InfoviewFc: React.FC<
         }
 
     return (
-            <EditorContext.Provider value={ec}>
-                <Main />
-            </EditorContext.Provider>
+            <div className="rl-infoview-hack">
+                <EditorContext.Provider value={ec}>
+                    <Main />
+                </EditorContext.Provider>
+            </div>
     )
 }
