@@ -6,7 +6,7 @@ import type { DidCloseTextDocumentParams, DocumentUri, Location } from 'vscode-l
 // FIXME
 // import '@vscode/codicons/dist/codicon.css'
 // import '@vscode/codicons/dist/codicon.ttf'
-import 'tachyons/css/tachyons.css'
+import './tachyons.css'
 import './highlightjs.css'
 import './index.css'
 
