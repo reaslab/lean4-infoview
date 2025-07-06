@@ -3,9 +3,10 @@ import * as React from 'react'
 import * as ReactDOM from 'react-dom/client'
 import type { DidCloseTextDocumentParams, DocumentUri, Location } from 'vscode-languageserver-protocol'
 
-import '@vscode/codicons/dist/codicon.css'
-import '@vscode/codicons/dist/codicon.ttf'
-import 'tachyons/css/tachyons.css'
+// FIXME
+// import '@vscode/codicons/dist/codicon.css'
+// import '@vscode/codicons/dist/codicon.ttf'
+import './tachyons.css'
 import './highlightjs.css'
 import './index.css'
 
