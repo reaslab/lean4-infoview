@@ -57,6 +57,28 @@ export async function importWidgetModule(rs: RpcSessionAtPos, pos: DocumentPosit
     const resp = await Widget_getWidgetSource(rs, pos, hash)
     let src = resp.sourcetext
 
+
+  
+    // HACK: The upstream has a bug where it doesn't supply a `key` prop.
+    // This is a patch to fix it.
+    // See https://github.com/leanprover/lean4/blob/f8c743e37d993b3c95754e4865b88cab8fbea2ce/src/Lean/Meta/Tactic/TryThis.lean#L53
+    const buggyInlined = `e('pre', { className: 'font-code pre-wrap' }, header, makeSuggestion(suggestions[0])))`
+    if (src.includes(buggyInlined)) {
+        src = src.replace(
+            buggyInlined,
+            `e('pre', { className: 'font-code pre-wrap' }, header, ...makeSuggestion(suggestions[0]).filter(c => c).map((c, i) => React.cloneElement(c, {key:i}))))`,
+        )
+    }
+
+    const buggyList = `e('li', { className: 'font-code pre-wrap' }, makeSuggestion(s)))))`
+    if (src.includes(buggyList)) {
+        src = src.replace(`suggestions.map(s =>`, `suggestions.map((s, i) =>`)
+        src = src.replace(
+            buggyList,
+            `e('li', { key: i, className: 'font-code pre-wrap' }, makeSuggestion(s)))))`,
+        )
+    }
+
     /*
      * Now we want to handle imports of other `@[widget_module]`s in `src`.
      * At least two ways of doing this are possible:
