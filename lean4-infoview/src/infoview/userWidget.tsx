@@ -15,11 +15,11 @@ import { useRpcSession } from './rpcSessions'
 import { DocumentPosition, mapRpcError, useAsyncPersistent } from './util'
 import { rewriteModule } from './rewriteModule'
 
-async function dynamicallyLoadModule(hash: string, code: string): Promise<any> {
+async function dynamicallyLoadModule(hash: string, code: string): Promise<[any, string]> {
     const newCode = await rewriteModule(code)
     const file = new File([newCode], `widget_${hash}.js`, { type: 'text/javascript' })
     const url = URL.createObjectURL(file)
-    return await import(/* webpackIgnore: true */ url)
+    return [await import(/* webpackIgnore: true */ url), url]
 }
 
 /** Maps module hash to (loaded module, its URI). */
